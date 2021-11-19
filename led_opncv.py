@@ -1,6 +1,33 @@
+#!/usr/bin/env python3
 import cv2
 import numpy as np
-import imutils
+#import imutils
+# Simple test for NeoPixels on Raspberry Pi
+import time
+import board
+import neopixel
+
+
+# Choose an open pin connected to the Data In of the NeoPixel strip, i.e. board>
+# NeoPixels must be connected to D10, D12, D18 or D21 to work.
+pixel_pin = board.D18
+
+# The number of NeoPixels
+num_pixels = 100
+
+# The order of the pixel colors - RGB or GRB. Some NeoPixels have red and green>
+# For RGBW NeoPixels, simply change the ORDER to RGBW or GRBW.
+ORDER = neopixel.GRB
+
+pixels = neopixel.NeoPixel(
+    pixel_pin, num_pixels, brightness=0.8, auto_write=False, pixel_order=ORDER)
+
+# Reverse LEDs
+def reverse(seq, start, stop):
+    size = stop + start
+    for i in range(start, (size + 1) // 2 ):
+        j = size - i
+        seq[i], seq[j] = seq[j], seq[i]
 
 cap = cv2.VideoCapture(0)
 #trackbar callback fucntion does nothing but required for trackbar
@@ -38,19 +65,15 @@ while(True):
         for y in range(0,10,1):
             pixel_color = int(dst[y,x])
             color.append(pixel_color)
-            print (color)
-    for change_pixel in range(0,len(color)):
-        if (pixel_color >= 1):
-            #Set led to black
-            print("LED Black", pixel_color)
+    print(color)
+    for color_led in range(len(color)):
+        if color[color_led]> 0:
+            pixels[color_led] = (0,0,0)
         else:
-            # Set pixel to white
-            print("LED White", pixel_color)
-            # Check color, if its all zeroes then turn on the approriate LED to white
-            # Things to do..change x,y pixel cordinates to location on the strip
-    
+            pixels[color_led] =(255,255,255)
+    pixels.show()
     cv2.imshow('frame',dst)
-    
+
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
