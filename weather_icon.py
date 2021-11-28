@@ -26,17 +26,25 @@ url = "https://openweathermap.org/img/wn/{}.png".format(data["list"][0]["weather
 #url_response = urllib.request.urlopen(url)
 #image = cv2.imdecode(np.array(bytearray(url_response.read()), dtype=np.uint8), -1)
 
-resp = urllib.request.urlopen(url)
+resp = requests.get(url, stream=True).raw
 image = np.asarray(bytearray(resp.read()), dtype="uint8")
-image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+image = cv2.imdecode(image, -1)
+
+trans_mask = image[:,:,3] == 0
+
+#replace areas of transparency with white and not transparent
+image[trans_mask] = [103, 65, 100, 255]
+
+#new image without alpha channel...
+new_img = cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
 
 #Change the icon to required image dimensions
-height_image =22
-width_image = 26
-marginx = 10
-marginy = 12
-crop_img = image[marginy:marginy+height_image, marginx:marginx+width_image]
-print("Size is", crop_img.shape)
+#height_image =28
+#width_image = 36
+#marginx = 8
+#marginy = 6
+#crop_img = new_img[marginy:marginy+height_image, marginx:marginx+width_image]
+#print("Size is", crop_img.shape)
 
 # Set the pygame background colour and size
 background_colour = (0,0,0)
@@ -52,7 +60,7 @@ while running:
     # Show original icon image
     cv2.imshow('Icon',image)
     # Show the croppedweather icon
-    cv2.imshow('Cropped icon',crop_img)
+    #cv2.imshow('Cropped icon',crop_img)
     # Print out all the panels
     # First set an are to be white
     for x in range (1,100,1):
@@ -69,11 +77,11 @@ while running:
             pygame.draw.circle(screen, (0,0,255), (x*10,y*10), 5)
 
     #  Weather icon
-    for x1 in range (0,width_image,1):
-        for y1 in range(2,height_image,1):
+    for x1 in range (0,50,1):
+        for y1 in range(2,50,1):
             #Get the color values from the icon image 
-            (b,g,r) = crop_img[y1,x1]
-            pygame.draw.circle(screen, (r,g,b), ((x1*10)+400,(y1*10)+300), 5)
+            (b,g,r) = new_img[y1,x1]
+            pygame.draw.circle(screen, (r,g,b), ((x1*10)+260,(y1*10)+190), 5)
      # Pollution Green        
     for x in range (77,87,1):
         for y in range(20,70,1):
