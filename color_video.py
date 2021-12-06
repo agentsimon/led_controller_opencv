@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 #import imutils
 # Simple test for NeoPixels on Raspberry Pi
-from time import sleep
+import time
 import board
 import neopixel
 
@@ -13,14 +13,14 @@ import neopixel
 pixel_pin = board.D18
 
 # The number of NeoPixels
-num_pixels = 100
+num_pixels = 64
 
 # The order of the pixel colors - RGB or GRB. Some NeoPixels have red and green>
 # For RGBW NeoPixels, simply change the ORDER to RGBW or GRBW.
 ORDER = neopixel.GRB
 
 pixels = neopixel.NeoPixel(
-    pixel_pin, num_pixels, brightness=0.8, auto_write=False, pixel_order=ORDER)
+    pixel_pin, num_pixels, brightness=0.1, auto_write=True, pixel_order=ORDER)
 
 # Reverse LEDs
 def reverse(seq, start, stop):
@@ -29,50 +29,34 @@ def reverse(seq, start, stop):
         j = size - i
         seq[i], seq[j] = seq[j], seq[i]
 
-# Check LEDs
-wait = 1
-sleep(wait)
-pixels.fill((0, 255, 0))
-pixels.show()
-sleep(wait)
-pixels.fill((0,0,255))
-pixels.show()
-sleep(wait)
-pixels.fill((255,0,0))
-pixels.show()
-sleep(wait)
-pixels.fill((0,0,0))
-pixels.show()
-
-# Define capture camera as USB
 cap = cv2.VideoCapture(0)
 
+
 while(True):
-    # Capture frame-by-frame 
+    # Capture frame-by-frame
+    #pixels.setBrightness(30)
     ret, frame = cap.read()
-    # Resize the capured frame
-    frame =cv2.resize(frame,(10, 10), interpolation = cv2.INTER_LINEAR)
-    #print("Shape", frame.shape)
    
-    # Print RGB values for the image
-    color = []
-    col_pos = [None] *100
+    #frame = imutils.resize(frame,80, 60)
+    frame =cv2.resize(frame,(8, 8), interpolation = cv2.INTER_LINEAR)
+#    print(frame.shape)
+    (b, g ,r) =frame[4,4]
+ #   print("Pixel at (4, 4) - Red: {}, Green: {}, Blue: {}".format(r, g, b))
+    # Our operations on the frame come here
+  #  print(frame[5,5])     
+    # Print GRB values for the image
     position = 0
-    for x in range (0,10,1):
-        for y in range(0,10,1):
-            (b,g,r) = frame[y,x]
+    color = []
+    for x in range (0,8,1):
+        for y in range(0,8,1):
+            (b, g, r) = frame[y,x]
+            color.insert(position,(r,g,b))
             position = position +1
-            color.insert(position,(g,r,b))
-    #print(color)
-    
-    for x in range(10,100,20):
-        reverse(color, x, x+9)
-    #print(color)
-    for color_led in range(len(color)):
-        pixels[color_led] = color[color_led]
-        
+    for X1 in range(len(color)):
+        pixels[X1] = color[X1]   
     pixels.show()
-    #cv2.imshow('frame',frame)
+            
+   # cv2.imshow('frame',frame)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
