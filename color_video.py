@@ -34,17 +34,16 @@ cap = cv2.VideoCapture(0)
 
 while(True):
     # Capture frame-by-frame
-    #pixels.setBrightness(30)
+   
     ret, frame = cap.read()
    
     #frame = imutils.resize(frame,80, 60)
     frame =cv2.resize(frame,(8, 8), interpolation = cv2.INTER_LINEAR)
-#    print(frame.shape)
+
     (b, g ,r) =frame[4,4]
- #   print("Pixel at (4, 4) - Red: {}, Green: {}, Blue: {}".format(r, g, b))
+
     # Our operations on the frame come here
-  #  print(frame[5,5])     
-    # Print GRB values for the image
+
     position = 0
     color = []
     for x in range (0,8,1):
@@ -54,7 +53,6 @@ while(True):
             position = position +1
     for X1 in range(len(color)):
         pixels[X1] = color[X1]   
-    pixels.show()
             
    # cv2.imshow('frame',frame)
 
