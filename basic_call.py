@@ -2,7 +2,7 @@ import requests
 import json
 import urllib.request
 
-url ="https://api.openweathermap.org/data/2.5/onecall?lat=10.075239&lon=108.224136&exclude=current,minutely,daily,alerts&appid=a68a0ee8420eb5ffcb2a5ce643107da7"
+url ="https://api.openweathermap.org/data/2.5/onecall?lat=10.075239&lon=108.224136&exclude=current,minutely,daily,alerts&appid=Openweather key"
 
 api_key = "Openweather key"
 lat = "10.075239"
